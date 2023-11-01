@@ -1,0 +1,188 @@
+<h1>Pessoas</h1>
+
+<div class="card p-shadow-6">
+    <div style="padding: 1%;">
+        <div class="p-fluid">
+            <div class="p-field p-grid">
+                <div [formGroup]="formPesquisaPessoa" class="p-col-12 p-md-10 p-input-icon-left">
+                    <i class="pi pi-search"></i>
+                    <input formControlName="id" pInputText id="username" />
+                </div>
+                <label class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">
+                    <button pButton type="button" icon="pi pi-plus" label="Cadastro" (click)="abrirCadastro()"></button>
+                </label>
+            </div>
+        </div>
+
+
+        <p-table [value]="listaPessoas"
+          [tableStyle]="{ 'min-width': '50rem' }" >
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Nome</th>
+                    <th>Cpf</th>
+                    <th>Data Nascimento</th>
+                    <th width="10px"></th>
+                    <th width="10px"></th>
+                    <th width="10px"></th>
+
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+                <tr>
+                    <td>{{ row.nome }}</td>
+                    <td>{{ row.cpf }}</td>
+                    <td>{{ row.dataNascimento }}</td>
+                    <td width="10px">
+                        <button (click)="abrirDetalheContatos(row)" pButton type="button"
+                            icon="pi pi-search"></button>
+                    </td>
+                    <td width="10px">
+                        <button (click)="editarPessoa(row)" pButton type="button" class="p-button-secondary"
+                            icon="pi pi-pencil"></button>
+                    </td>
+                    <td width="10px">
+                        <button (click)="excluirPessoa(row)" pButton type="button" class="p-button-danger"
+                            icon="pi pi-trash"></button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+        <div class="card flex justify-content-center">
+          <p-paginator (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows" [totalRecords]="120" ></p-paginator>
+      </div>
+    </div>
+</div>
+
+
+
+
+<!-- Detalhes contatos -->
+<p-dialog header="{{detalheContato.pessoa}}" [(visible)]="mostrarDetalhesContatos" [modal]="true"
+    [style]="{ width: '100vw' }" [draggable]="false" [resizable]="false">
+    <p-table [value]="detalheContato.contatos">
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Telefone</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-row>
+            <tr>
+                <td>{{ row.nome }}</td>
+                <td>{{ row.email }}</td>
+                <td>{{ row.telefone }}</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</p-dialog>
+
+
+
+<!-- Cadastro pessoa -->
+<p-dialog header="Cadastro Pessoa" [(visible)]="mostrarCadastro" [modal]="true" [style]="{ width: '1500px' }"
+    [draggable]="false" [resizable]="false">
+
+    <div class="p-fluid">
+
+        <div class="p-field p-grid">
+            <div class="p-col-12 p-md-8"></div>
+            <div class="p-col-12 p-md-2">
+              <button style="float: right;" pButton type="button" icon="pi pi-times" label="Cancelar"
+                  (click)="fecharCadastro()" class="p-button-danger"></button>
+            </div>
+            <div class="p-col-12 p-md-2">
+                <button style="float: right;" pButton type="button" icon="pi pi-check" label="Salvar"
+                    (click)="salvar()" class="p-button-success"></button>
+
+            </div>
+        </div>
+
+        <form [formGroup]="formModel">
+            <div class="p-field p-grid">
+                <label class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Nome</label>
+                <div class="p-col-12 p-md-10">
+                    <input formControlName="nome" type="text" placeholder="Nome" requered pInputText>
+                </div>
+            </div>
+            <div class="p-field p-grid">
+                <label class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Cpf</label>
+                <div class="p-col-12 p-md-10">
+                    <input formControlName="cpf" type="text" placeholder="Nome" requered pInputText>
+                </div>
+            </div>
+            <div class="p-field p-grid">
+                <label class="p-col-12 p-mb-2 p-md-2 p-mb-md-0">Nascimento</label>
+                <div class="p-col-12 p-md-10">
+                    <p-calendar formControlName="dataNascimento" [showIcon]="true" [touchUI]="true" [readonlyInput]="true" appendTo="body"></p-calendar>
+
+                  </div>
+            </div>
+        </form>
+
+        <br>
+        <h4>Contatos</h4>
+        <div class="p-field p-grid">
+            <div class="p-col-12 p-md-4">
+                <input [(ngModel)]="contatos.nome" type="text" placeholder="Nome" pInputText>
+            </div>
+            <div class="p-col-12 p-md-4">
+                <input [(ngModel)]="contatos.email" type="email" placeholder="Email" pInputText>
+            </div>
+            <div class="p-col-12 p-md-3">
+                <input [(ngModel)]="contatos.telefone" type="text" placeholder="Telefone" pInputText>
+            </div>
+            <div class="p-col-12 p-md-1">
+                <button (click)="adicionarContato()" pButton type="button" icon="pi pi-plus"></button>
+            </div>
+        </div>
+        <p-table *ngIf="cadastroContatos.length" [value]="cadastroContatos">
+            <ng-template pTemplate="header">
+                <tr>
+                    <th>Nome</th>
+                    <th>Email</th>
+                    <th>Telefone</th>
+                    <th width="10px">
+                    </th>
+                    <th width="10%">
+                    </th>
+                </tr>
+            </ng-template>
+            <ng-template pTemplate="body" let-row>
+                <tr>
+                    <td>{{ row.nome }}</td>
+                    <td>{{ row.email }}</td>
+                    <td>{{ row.telefone }}</td>
+                    <td width="10px">
+                        <button (click)="deletarContato(row)" pButton type="button" icon="pi pi-pencil" class="p-button-secondary"></button>
+                    </td>
+                    <td width="10%">
+                        <button (click)="deletarContato(row)" pButton type="button" icon="pi pi-times" class="p-button-danger"></button>
+                    </td>
+                </tr>
+            </ng-template>
+        </p-table>
+    </div>
+    <br>
+</p-dialog>
+
+
+<p-confirmDialog #cd [style]="{ width: '50vw' }">
+    <ng-template pTemplate="header">
+        <h3></h3>
+    </ng-template>
+    <ng-template pTemplate="message">
+        <p> Deseja remover o contato ?</p>
+    </ng-template>
+    <ng-template pTemplate="footer">
+        <button type="button" pButton icon="pi pi-times" label="Não" (click)="cd.reject()"></button>
+        <button type="button" pButton icon="pi pi-check" label="Sim" (click)="cd.accept()"></button>
+    </ng-template>
+</p-confirmDialog>
+
+
+
+<p-toast></p-toast>
+
+
